@@ -1,0 +1,18 @@
+{
+    "file_lc": "http://localhost:8080/manager/upload",
+    "data_source": "host=localhost user=postgres password=1234 dbname=app_rice_wine port=5432 sslmode=disable TimeZone=Asia/Shanghai",
+    "port": "8080",
+    "access_secret": "secretAAAAAAAAAAAaaaaaaaaassssdsv",
+    "expire_access": "24h",
+    "refresh_secret": "secretAAAAAAAAAAAaaaaaaaaassssdsv",
+    "expire_refresh": "168h",
+    "keyAES128": "your-256-bit-key-32-byte-long-wx",
+    "fromEmail": "tranhuythang9999@gmail.com",
+    "passwordEmail": "nvkq qdrq ecpa bapz",
+    "smtpHost": "smtp.gmail.com",
+    "smtpPort": "587",
+    "addressRedis": "localhost:6379",
+    "passwordRedis": "",
+    "databaseredisIndex": "0",
+    "configPathFile":"http://127.0.0.1:8080/manager/files/export"
+}

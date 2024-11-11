@@ -1,0 +1,6 @@
+**/shader
+**/go.mod
+**/go.sum
+**/publics
+.vercel
+.env*.local
