@@ -8,17 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ControllerUser struct {
-	user *services.ServiceUser
+type UserController struct {
+	user *services.UserService
 }
 
-func NewControllerUser(user *services.ServiceUser) *ControllerUser {
-	return &ControllerUser{
+func NewControllerUser(user *services.UserService) *UserController {
+	return &UserController{
 		user: user,
 	}
 }
 
-func (u *ControllerUser) CreateUser(ctx *gin.Context) {
+func (u *UserController) CreateUser(ctx *gin.Context) {
 	var user entities.CreateUsersRequest
 	if !BindAndValidate(ctx, &user) {
 		return
@@ -30,4 +30,17 @@ func (u *ControllerUser) CreateUser(ctx *gin.Context) {
 		return
 	}
 	RespondSuccess(ctx, nil)
+}
+
+func (u *UserController) GetUser(ctx *gin.Context) {
+	phoneNumber, ok := GetPhoneNumber(ctx)
+	if !ok {
+		return
+	}
+	resp, err := u.user.ProFileUser(ctx, phoneNumber)
+	if err != nil {
+		RespondError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	RespondSuccess(ctx, resp)
 }

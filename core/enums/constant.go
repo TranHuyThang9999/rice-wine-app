@@ -1,4 +1,4 @@
-package constant
+package enums
 
 const (
 	ROLE_ADMIN = 1

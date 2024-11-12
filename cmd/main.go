@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
+	"net"
 	"rice-wine-shop/api/routers"
-	"rice-wine-shop/common/log"
+	log "rice-wine-shop/common/log"
+	"rice-wine-shop/core/adapters/interfaces"
 	"rice-wine-shop/core/configs"
+	"rice-wine-shop/core/generator"
 	"rice-wine-shop/fxloader"
 
 	"net/http"
@@ -13,6 +17,7 @@ import (
 	"os/signal"
 
 	"go.uber.org/fx"
+	"google.golang.org/grpc"
 )
 
 func init() {
@@ -21,7 +26,6 @@ func init() {
 	flag.StringVar(&pathConfig, "configs", "common/configs/configs.json", "path config")
 	flag.Parse()
 	configs.LoadConfig(pathConfig)
-	//adapters.ConnectPgsql()
 
 }
 
@@ -31,6 +35,7 @@ func main() {
 		fx.Options(fxloader.Load()...),
 		fx.Invoke(serverLifecycle),
 		fx.Options(),
+		fx.Invoke(startGRPCServer),
 	)
 
 	if err := app.Start(context.Background()); err != nil {
@@ -55,7 +60,7 @@ func serverLifecycle(lc fx.Lifecycle, apiRouter *routers.ApiRouter, cf *configs.
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
-				if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 					log.Fatal(err, "Cannot start server,address")
 				}
 			}()
@@ -65,6 +70,31 @@ func serverLifecycle(lc fx.Lifecycle, apiRouter *routers.ApiRouter, cf *configs.
 		OnStop: func(ctx context.Context) error {
 			log.Infof("Stopping backend server.", cf.Port)
 			return server.Shutdown(ctx)
+		},
+	})
+}
+func startGRPCServer(lc fx.Lifecycle) {
+	lis, err := net.Listen("tcp", ":5000")
+	if err != nil {
+		log.Error(err, "error")
+	}
+
+	grpcServer := grpc.NewServer()
+	generator.RegisterOrderServiceServer(grpcServer, interfaces.NewOrderServerService())
+
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			go func() {
+				if err := grpcServer.Serve(lis); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+					log.Error(err, "error")
+				}
+			}()
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			log.Info("Stopping gRPC server.")
+			grpcServer.GracefulStop()
+			return nil
 		},
 	})
 }

@@ -43,3 +43,43 @@ func BindAndValidate(ctx *gin.Context, req interface{}) bool {
 	}
 	return true
 }
+
+func GetUserID(c *gin.Context) (int64, bool) {
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(401, gin.H{
+			"error": "User ID not found in context",
+		})
+		return 0, false
+	}
+
+	id, ok := userID.(int64)
+	if !ok {
+		c.JSON(400, gin.H{
+			"error": "User ID has an invalid data type",
+		})
+		return 0, false
+	}
+	return id, true
+}
+
+func GetPhoneNumber(ctx *gin.Context) (string, bool) {
+	phoneNumber, ok := ctx.Get("phoneNumber")
+	if !ok {
+		ctx.JSON(401, gin.H{
+			"error": "Phone number not found in context",
+		})
+		return "", false
+	}
+
+	// Check if phoneNumber is of type string
+	phone, ok := phoneNumber.(string)
+	if !ok {
+		ctx.JSON(400, gin.H{
+			"error": "Phone number has an invalid data type",
+		})
+		return "", false
+	}
+
+	return phone, true
+}

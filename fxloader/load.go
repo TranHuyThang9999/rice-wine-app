@@ -2,8 +2,10 @@ package fxloader
 
 import (
 	"rice-wine-shop/api/controllers"
+	"rice-wine-shop/api/middlewares"
 	"rice-wine-shop/api/routers"
 	"rice-wine-shop/core/adapters"
+	"rice-wine-shop/core/adapters/interfaces"
 	"rice-wine-shop/core/adapters/repository"
 	"rice-wine-shop/core/services"
 
@@ -22,6 +24,9 @@ func Load() []fx.Option {
 func loadUseCase() []fx.Option {
 	return []fx.Option{
 		fx.Provide(services.NewServiceUser),
+		fx.Provide(services.NewJWTService),
+		fx.Provide(interfaces.NewOrderServerService),
+		fx.Provide(services.NewTypeRiceService),
 	}
 }
 
@@ -35,6 +40,9 @@ func loadEngine() []fx.Option {
 		fx.Provide(routers.NewApiRouter),
 		fx.Provide(controllers.NewControllerSaveFile),
 		fx.Provide(controllers.NewControllerUser),
+		fx.Provide(controllers.NewAuthController),
+		fx.Provide(middlewares.NewMiddleware),
+		fx.Provide(controllers.NewTypeRiceController),
 	}
 }
 func loadAdapter() []fx.Option {
@@ -43,5 +51,6 @@ func loadAdapter() []fx.Option {
 		fx.Provide(repository.NewUserRepository),
 		fx.Provide(repository.NewFileRepository),
 		fx.Provide(adapters.ConnectPgsql),
+		fx.Provide(repository.NewTypeRiceRepository),
 	}
 }
