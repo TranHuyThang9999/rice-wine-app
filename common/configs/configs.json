@@ -14,5 +14,6 @@
     "addressRedis": "localhost:6379",
     "passwordRedis": "",
     "databaseredisIndex": "0",
-    "configPathFile":"http://127.0.0.1:8080/manager/files/export"
+    "configPathFile":"http://127.0.0.1:8080/manager/files/export",
+    "hostAccess":"http://127.0.0.1:3000"
 }

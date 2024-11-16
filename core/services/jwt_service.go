@@ -107,6 +107,7 @@ func (u *JWTService) Login(ctx context.Context, req *entities.LoginRequest) (*en
 	}
 
 	return &entities.LoginResponse{
+		Role:       user.Role,
 		Token:      token,
 		ReferToken: referToken,
 		CreatedAt:  time.Now(),

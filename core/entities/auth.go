@@ -10,6 +10,7 @@ type LoginRequest struct {
 	Password    string `json:"password" binding:"required"`
 }
 type LoginResponse struct {
+	Role       int       `json:"role"`
 	Token      string    `json:"token"`
 	ReferToken string    `json:"referToken"`
 	CreatedAt  time.Time `json:"createdAt"`

@@ -27,6 +27,15 @@ func (u *AuthController) Login(ctx *gin.Context) {
 		RespondError(ctx, http.StatusBadRequest, err)
 		return
 	}
+
+	http.SetCookie(ctx.Writer, &http.Cookie{
+		Name:     "auth_token",
+		Value:    resp.Token,
+		Path:     "/",
+		MaxAge:   3600,
+		Secure:   true,
+		HttpOnly: true,
+	})
 	RespondSuccess(ctx, resp)
 	return
 }

@@ -22,6 +22,7 @@ type Configs struct {
 	PasswordRedis  string `json:"passwordRedis"`
 	DatabasedIndex string `json:"databased_index"`
 	ConfigPathFile string `json:"configPathFile,omitempty"`
+	HostAccess     string `json:"hostAccess,omitempty"`
 }
 
 var config *Configs
