@@ -9,7 +9,6 @@ import (
 	"rice-wine-shop/core/configs"
 	"rice-wine-shop/core/domain"
 	"rice-wine-shop/core/entities"
-	"rice-wine-shop/core/generator"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -27,13 +26,14 @@ func NewJWTService(user domain.RepositoryUser, order *interfaces.OrderClientServ
 		order: order,
 	}
 }
-func (u *JWTService) genToken(ctx context.Context, phoneNumber string, updateAt int64, expireAccess string, role int) (string, error) {
+func (u *JWTService) genToken(ctx context.Context, phoneNumber string, updateAt int64, expireAccess string, role int, userID int64) (string, error) {
 	expirationDuration, err := time.ParseDuration(configs.Get().ExpireRefresh)
 	if err != nil {
 		return "", fmt.Errorf("invalid token expiration duration: %v", err)
 	}
 
 	claims := entities.UserClaims{
+		UserID:      userID,
 		PhoneNumber: phoneNumber,
 		UpdateAt:    updateAt,
 		Role:        role,
@@ -97,16 +97,15 @@ func (u *JWTService) Login(ctx context.Context, req *entities.LoginRequest) (*en
 	if err != nil {
 		return nil, apperrors.ErrUserNotFound
 	}
-	token, err := u.genToken(ctx, req.PhoneNumber, user.UpdatedAt, configs.Get().ExpireAccess, user.Role)
+	token, err := u.genToken(ctx, req.PhoneNumber, user.UpdatedAt, configs.Get().ExpireAccess, user.Role, user.ID)
 	if err != nil {
 		return nil, err
 	}
-	referToken, err := u.genToken(ctx, req.PhoneNumber, user.UpdatedAt, configs.Get().ExpireAccess, user.Role)
+	referToken, err := u.genToken(ctx, req.PhoneNumber, user.UpdatedAt, configs.Get().ExpireAccess, user.Role, user.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	u.order.CreateOrder(ctx, &generator.CreateOrderRequest{})
 	return &entities.LoginResponse{
 		Token:      token,
 		ReferToken: referToken,

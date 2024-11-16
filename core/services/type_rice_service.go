@@ -50,19 +50,22 @@ func (u *TypeRiceService) AddTypeRice(ctx context.Context, creatorID int64, req 
 			log.Error(err, "error")
 			return err
 		}
-		var listFile = make([]*domain.FileStore, 0)
-		for _, file := range req.Files {
-			listFile = append(listFile, &domain.FileStore{
-				ID:    utils.GenerateUniqueKey(),
-				AnyID: typeRiceID,
-				Path:  file,
-			})
+		if len(req.Files) > 0 {
+			var listFile = make([]*domain.FileStore, 0)
+			for _, file := range req.Files {
+				listFile = append(listFile, &domain.FileStore{
+					ID:    utils.GenerateUniqueKey(),
+					AnyID: typeRiceID,
+					Path:  file,
+				})
+			}
+			err = u.file.AddListFile(ctx, tx, listFile)
+			if err != nil {
+				log.Error(err, "error")
+				return err
+			}
 		}
-		err = u.file.AddListFile(ctx, tx, listFile)
-		if err != nil {
-			log.Error(err, "error")
-			return err
-		}
+
 		return nil
 	})
 	if err != nil {

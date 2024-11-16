@@ -24,7 +24,9 @@ func (u *AuthController) Login(ctx *gin.Context) {
 	}
 	resp, err := u.auth.Login(ctx, &req)
 	if err != nil {
-		RespondError(ctx, http.StatusInternalServerError, err)
+		RespondError(ctx, http.StatusBadRequest, err)
+		return
 	}
 	RespondSuccess(ctx, resp)
+	return
 }

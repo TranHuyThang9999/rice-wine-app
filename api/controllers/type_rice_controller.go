@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"rice-wine-shop/core/entities"
+	"rice-wine-shop/core/enums"
 	"rice-wine-shop/core/services"
 )
 
@@ -24,6 +25,14 @@ func (u *TypeRiceController) AddTypeRice(c *gin.Context) {
 	}
 	userID, ok := GetUserID(c)
 	if !ok {
+		return
+	}
+	role, ok := GetRole(c)
+	if !ok {
+		return
+	}
+	if role != enums.ROLE_ADMIN {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Access is restricted to administrators only"})
 		return
 	}
 	err := u.typeRice.AddTypeRice(c, userID, &req)

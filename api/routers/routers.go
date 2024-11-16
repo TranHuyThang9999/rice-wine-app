@@ -34,6 +34,11 @@ func NewApiRouter(
 	})
 	r.POST("/add", user.CreateUser)
 	r.POST("/login", auth.Login)
+	checkGroup := r.Group("/check", middleware.Authorization())
+	{
+		checkGroup.POST("/", middleware.CheckToken)
+
+	}
 	userGroup := r.Group("/user", middleware.Authorization())
 	{
 		userGroup.GET("/profile/", user.GetUser)

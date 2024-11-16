@@ -13,5 +13,6 @@ type User struct {
 	PhoneNumber string `json:"phone_number"`
 	Email       string `json:"email,omitempty"`
 	Avatar      string `json:"avatar"`
+	Role        int    `json:"role"`
 	UpdatedAt   int64  `json:"updated_at,omitempty"`
 }

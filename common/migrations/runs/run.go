@@ -1,47 +1,49 @@
-package migrate
+package main
 
-// import (
-// 	"log"
-// 	"rice-wine-shop/core/configs"
+import (
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 
-// 	"github.com/golang-migrate/migrate"
-// 	"gorm.io/gorm"
-// )
+	_ "github.com/lib/pq"
+)
 
-// func RunMigrations() {
+func main() {
+	dsn := "host=localhost user=postgres password=1234 dbname=app_rice_wine port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	folderIncludeFileMigrations := "common/migrations"
 
-// 	// Kết nối tới cơ sở dữ liệu bằng GORM
-// 	db, err := gorm.Open(postgres.Open(configs.Get().DataSource), &gorm.Config{})
-// 	if err != nil {
-// 		log.Fatalf("Không thể kết nối tới cơ sở dữ liệu: %v", err)
-// 	}
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal("Error connecting to database:", err)
+	}
+	defer db.Close()
 
-// 	// Lấy đối tượng sql.DB từ GORM
-// 	sqlDB, err := db.DB()
-// 	if err != nil {
-// 		log.Fatalf("Không thể lấy đối tượng sql.DB từ GORM: %v", err)
-// 	}
+	files, err := os.ReadDir(folderIncludeFileMigrations)
+	if err != nil {
+		log.Fatal("Error reading migrations folder:", err)
+	}
 
-// 	// Tạo driver cho golang-migrate
-// 	driver, err := postgres.WithInstance(sqlDB, &postgres.Config{})
-// 	if err != nil {
-// 		log.Fatalf("Không thể tạo driver cho migration: %v", err)
-// 	}
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".sql" {
+			filePath := filepath.Join(folderIncludeFileMigrations, file.Name())
 
-// 	// Tạo đối tượng migrate, trỏ đến thư mục migrations
-// 	m, err := migrate.NewWithDatabaseInstance(
-// 		"file://common/migrations",
-// 		"postgres",
-// 		driver,
-// 	)
-// 	if err != nil {
-// 		log.Fatalf("Không thể tạo đối tượng migrate: %v", err)
-// 	}
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				log.Printf("Error reading file %s: %v", file.Name(), err)
+				continue
+			}
 
-// 	// Thực hiện migration
-// 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-// 		log.Fatalf("Lỗi khi chạy migration: %v", err)
-// 	}
+			_, err = db.Exec(string(content))
+			if err != nil {
+				log.Printf("Error executing migration %s: %v", file.Name(), err)
+				continue
+			}
 
-// 	log.Println("Migration đã hoàn tất!")
-// }
+			fmt.Printf("Successfully executed migration: %s\n", file.Name())
+		}
+	}
+
+	fmt.Println("Migration completed")
+}

@@ -83,3 +83,22 @@ func GetPhoneNumber(ctx *gin.Context) (string, bool) {
 
 	return phone, true
 }
+func GetRole(ctx *gin.Context) (int, bool) {
+	role, ok := ctx.Get("role")
+	if !ok {
+		ctx.JSON(401, gin.H{
+			"error": "Phone number not found in context",
+		})
+		return 0, false
+	}
+
+	roleNumber, ok := role.(int)
+	if !ok {
+		ctx.JSON(400, gin.H{
+			"error": "Phone number has an invalid data type",
+		})
+		return 0, false
+	}
+
+	return roleNumber, true
+}

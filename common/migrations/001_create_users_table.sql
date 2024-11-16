@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS file_stores (
     path VARCHAR(255) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS type_rices (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
+    creator_id BIGINT,
     name VARCHAR(255) NOT NULL,
     deleted_at TIMESTAMP
 );

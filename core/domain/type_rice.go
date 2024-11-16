@@ -8,7 +8,7 @@ import (
 type TypeRice struct {
 	ID        int64          `json:"id"`
 	Name      string         `json:"name"`
-	CreatorID int64          `json:"creatorId"`
+	CreatorID int64          `json:"creator_id"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 

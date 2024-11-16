@@ -18,12 +18,12 @@ func NewFileRepository(db *gorm.DB) domain.RepositoryFileStore {
 }
 
 func (f *FileRepository) AddListFile(ctx context.Context, tx *gorm.DB, req []*domain.FileStore) error {
-	result := tx.Create(&req)
+	result := tx.WithContext(ctx).Create(&req)
 	return result.Error
 }
 
 func (f *FileRepository) Create(ctx context.Context, tx *gorm.DB, req *domain.FileStore) error {
-	result := tx.Create(&req)
+	result := tx.WithContext(ctx).Create(&req)
 	return result.Error
 }
 
@@ -33,6 +33,6 @@ func (f *FileRepository) DeleteById(ctx context.Context, id int64) error {
 
 func (f *FileRepository) GetListFileByObjectID(ctx context.Context, anyID int64) ([]*domain.FileStore, error) {
 	var files = make([]*domain.FileStore, 0)
-	result := f.db.Where("any_id = ?", anyID).Find(&files)
+	result := f.db.WithContext(ctx).Where("any_id = ?", anyID).Find(&files)
 	return files, result.Error
 }

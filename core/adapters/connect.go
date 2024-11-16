@@ -14,5 +14,6 @@ func ConnectPgsql() *gorm.DB {
 		log.Fatal(err, "Failed to connect to the database")
 		return nil
 	}
+
 	return db
 }

@@ -35,7 +35,7 @@ func main() {
 		fx.Options(fxloader.Load()...),
 		fx.Invoke(serverLifecycle),
 		fx.Options(),
-		fx.Invoke(startGRPCServer),
+		//fx.Invoke(startGRPCServer),
 	)
 
 	if err := app.Start(context.Background()); err != nil {

@@ -16,6 +16,7 @@ type LoginResponse struct {
 }
 
 type UserClaims struct {
+	UserID      int64  `json:"userId"`
 	PhoneNumber string `json:"phoneNumber"`
 	UpdateAt    int64  `json:"updatedAt"`
 	Role        int    `json:"role"`

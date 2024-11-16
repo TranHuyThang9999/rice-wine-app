@@ -95,6 +95,7 @@ func (u *UserService) ProFileUser(ctx context.Context, phoneNumber string) (*ent
 		PhoneNumber: user.PhoneNumber,
 		Email:       user.Email,
 		Avatar:      pathAvatar,
+		Role:        user.Role,
 		UpdatedAt:   user.UpdatedAt,
 	}, nil
 }
