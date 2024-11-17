@@ -16,6 +16,7 @@ type RepositoryTypeRice interface {
 	Add(ctx context.Context, tx *gorm.DB, req *TypeRice) error
 	DeleteById(ctx context.Context, id int64) error
 	UpdateById(ctx context.Context, req *TypeRice) error
-	GetList(ctx context.Context) ([]*TypeRice, error)
+	GetListByCreator(ctx context.Context, creatorID int64) ([]*TypeRice, error)
 	GetTypeRiceNameByUserID(ctx context.Context, userID int64, nameRice string) (int64, error)
+	CheckExistsTypeRiceByID(ctx context.Context, userID int64, typeRiceID int64) (int64, error)
 }

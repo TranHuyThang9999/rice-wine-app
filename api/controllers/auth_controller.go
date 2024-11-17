@@ -33,8 +33,8 @@ func (u *AuthController) Login(ctx *gin.Context) {
 		Value:    resp.Token,
 		Path:     "/",
 		MaxAge:   3600,
-		Secure:   true,
-		HttpOnly: true,
+		Secure:   false,
+		HttpOnly: false,
 	})
 	RespondSuccess(ctx, resp)
 	return

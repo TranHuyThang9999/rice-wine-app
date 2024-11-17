@@ -35,6 +35,14 @@ func RespondSuccess(ctx *gin.Context, data interface{}) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+func RespondConflict(ctx *gin.Context, statusCode int, message string) {
+	response := ErrorResponse{
+		Error:   true,
+		Message: message,
+	}
+	ctx.JSON(statusCode, response)
+}
+
 func BindAndValidate(ctx *gin.Context, req interface{}) bool {
 	if err := ctx.ShouldBind(req); err != nil {
 		log.Error(err, "error request")
@@ -72,7 +80,6 @@ func GetPhoneNumber(ctx *gin.Context) (string, bool) {
 		return "", false
 	}
 
-	// Check if phoneNumber is of type string
 	phone, ok := phoneNumber.(string)
 	if !ok {
 		ctx.JSON(400, gin.H{

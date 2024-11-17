@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"rice-wine-shop/common/log"
 	"rice-wine-shop/common/utils"
+	"rice-wine-shop/core/apperrors"
 	"rice-wine-shop/core/domain"
 	"rice-wine-shop/core/entities"
 	"strings"
@@ -27,17 +28,17 @@ func NewTypeRiceService(typeRice domain.RepositoryTypeRice,
 	}
 }
 
-func (u *TypeRiceService) AddTypeRice(ctx context.Context, creatorID int64, req *entities.CreateTypeRiceRequest) error {
+func (u *TypeRiceService) AddTypeRice(ctx context.Context, creatorID int64, req *entities.CreateTypeRiceRequest) (*apperrors.ErrTypeRice, error) {
 	if u.trans == nil {
-		return fmt.Errorf("transaction manager is not initialized")
+		return nil, fmt.Errorf("transaction manager is not initialized")
 	}
 	count, err := u.typeRice.GetTypeRiceNameByUserID(ctx, creatorID, strings.TrimSpace(req.Name))
 	if err != nil {
 		log.Error(err, "error")
-		return err
+		return nil, err
 	}
 	if count > 0 {
-		return fmt.Errorf("type rice name %s already exists", req.Name)
+		return apperrors.ErrConflictTypeName.Pointer(), nil
 	}
 	err = u.trans.ExecuteInTransaction(ctx, func(tx *gorm.DB) error {
 		typeRiceID := utils.GenerateUniqueKey()
@@ -70,7 +71,37 @@ func (u *TypeRiceService) AddTypeRice(ctx context.Context, creatorID int64, req 
 	})
 	if err != nil {
 		log.Error(err, "error")
-		return err
+		return nil, err
 	}
-	return nil
+	return nil, err
+}
+
+func (u *TypeRiceService) GetTypeRiceNameByUserID(ctx context.Context, userID int64) ([]*entities.ListTypeRiceResponse, error) {
+	typeRiceList, err := u.typeRice.GetListByCreator(ctx, userID)
+	if err != nil {
+		log.Error(err, "failed to fetch list of type rice")
+		return nil, err
+	}
+
+	allFiles, err := u.file.GetListFileByUserID(ctx, userID)
+	if err != nil {
+		log.Error(err, "failed to fetch files for type rice")
+		return nil, err
+	}
+
+	fileMap := make(map[int64][]string)
+	for _, file := range allFiles {
+		fileMap[file.AnyID] = append(fileMap[file.AnyID], file.Path)
+	}
+
+	responses := make([]*entities.ListTypeRiceResponse, 0, len(typeRiceList))
+	for _, typeRice := range typeRiceList {
+		responses = append(responses, &entities.ListTypeRiceResponse{
+			ID:    typeRice.ID,
+			Name:  typeRice.Name,
+			Files: fileMap[typeRice.ID],
+		})
+	}
+
+	return responses, nil
 }

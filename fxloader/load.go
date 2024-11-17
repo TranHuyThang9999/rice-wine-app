@@ -27,6 +27,7 @@ func loadUseCase() []fx.Option {
 		fx.Provide(services.NewJWTService),
 		fx.Provide(interfaces.NewOrderServerService),
 		fx.Provide(services.NewTypeRiceService),
+		fx.Provide(services.NewRiceService),
 	}
 }
 
@@ -43,6 +44,7 @@ func loadEngine() []fx.Option {
 		fx.Provide(controllers.NewAuthController),
 		fx.Provide(middlewares.NewMiddleware),
 		fx.Provide(controllers.NewTypeRiceController),
+		fx.Provide(controllers.NewRiceController),
 	}
 }
 func loadAdapter() []fx.Option {
@@ -52,5 +54,6 @@ func loadAdapter() []fx.Option {
 		fx.Provide(repository.NewFileRepository),
 		fx.Provide(adapters.ConnectPgsql),
 		fx.Provide(repository.NewTypeRiceRepository),
+		fx.Provide(repository.NewRiceRepository),
 	}
 }
