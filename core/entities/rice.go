@@ -1,5 +1,7 @@
 package entities
 
+import "rice-wine-shop/core/domain"
+
 type CreateRiceRequest struct {
 	TypeRiceID    int64    `json:"type_rice_id" binding:"required"`
 	Name          string   `json:"name,omitempty" binding:"required"`
@@ -20,5 +22,5 @@ type ListRiceByUserIDResponse struct {
 	HarvestSeason int     `json:"harvest_season,omitempty"` // Mùa thu hoạch gạo
 	CreatedAt     int64   `json:"created_at,omitempty"`
 
-	Files []string `json:"files,omitempty"`
+	Files []*domain.FileStore `json:"files,omitempty"`
 }

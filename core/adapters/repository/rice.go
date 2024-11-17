@@ -54,3 +54,16 @@ func (r *RiceRepository) GetByRiceName(ctx context.Context, userID int64, name s
 	result := r.db.WithContext(ctx).Model(&domain.Rices{}).Where("creator_id = ? and name = ?", userID, name).Count(&count)
 	return count, result.Error
 }
+func (r *RiceRepository) GetListFileByUserID(ctx context.Context, userID int64) ([]*domain.FileStore, error) {
+	var files []*domain.FileStore
+	err := r.db.WithContext(ctx).
+		Table("file_stores").
+		Select("file_stores.id, file_stores.any_id, file_stores.path").
+		Joins("JOIN rices ON file_stores.any_id = rices.id").
+		Where("rices.creator_id = ?", userID).
+		Find(&files).Error
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
+}

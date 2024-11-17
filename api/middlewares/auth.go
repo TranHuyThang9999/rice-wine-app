@@ -2,13 +2,14 @@ package middlewares
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"rice-wine-shop/common/log"
 	"rice-wine-shop/core/apperrors"
 	"rice-wine-shop/core/enums"
 	"rice-wine-shop/core/services"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Middleware struct {

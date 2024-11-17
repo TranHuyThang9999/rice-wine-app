@@ -90,6 +90,28 @@ func (u *RiceService) AddRice(ctx context.Context, userID int64, req *entities.C
 	return nil, nil
 }
 
-func (u *RiceService) GetListRiceByUserID(ctx context.Context, userID int64) {
+func (u *RiceService) GetListRiceByUserID(ctx context.Context, userID int64) ([]*entities.ListRiceByUserIDResponse, error) {
+	listRiceByUserID, err := u.rice.GetListByCreatorID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
 
+	allFiles, err := u.rice.GetListFileByUserID(ctx, userID)
+	if err != nil {
+		log.Error(err, "failed to fetch files for type rice")
+		return nil, err
+	}
+	fileMap := make(map[int64][]*domain.FileStore)
+	for _, file := range allFiles {
+		fileMap[file.AnyID] = append(fileMap[file.AnyID], file)
+	}
+	responses := make([]*entities.ListRiceByUserIDResponse, 0, len(listRiceByUserID))
+	for _, typeRice := range listRiceByUserID {
+		responses = append(responses, &entities.ListRiceByUserIDResponse{
+			ID:    typeRice.ID,
+			Name:  typeRice.Name,
+			Files: fileMap[typeRice.ID],
+		})
+	}
+	return responses, nil
 }

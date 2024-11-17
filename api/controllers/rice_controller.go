@@ -37,3 +37,16 @@ func (u *RiceController) AddRice(ctx *gin.Context) {
 	}
 	RespondSuccess(ctx, nil)
 }
+
+func (u *RiceController) GetRiceByUserID(ctx *gin.Context) {
+	userID, ok := GetUserID(ctx)
+	if !ok {
+		return
+	}
+	resp, err := u.rice.GetListRiceByUserID(ctx, userID)
+	if err != nil {
+		RespondError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	RespondSuccess(ctx, resp)
+}

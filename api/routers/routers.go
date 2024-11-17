@@ -53,6 +53,7 @@ func NewApiRouter(
 		riceGroup := adminGroup.Group("/rice")
 		{
 			riceGroup.POST("/add", rice.AddRice)
+			riceGroup.GET("/list", rice.GetRiceByUserID)
 		}
 	}
 
@@ -66,14 +67,10 @@ func NewApiRouter(
 				c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
 				return
 			}
-
 			c.Writer.Header().Set("Content-Type", http.DetectContentType([]byte(filename)))
-
 			c.Writer.Header().Set("Content-Disposition", "inline")
 			c.File(filePath)
 		})
-
-		// Upload file
 		fileGroup.POST("/upload", handlerFile.SaveFile)
 	}
 	return &ApiRouter{

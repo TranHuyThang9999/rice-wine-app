@@ -3,13 +3,14 @@ package services
 import (
 	"context"
 	"fmt"
-	"gorm.io/gorm"
 	"rice-wine-shop/common/log"
 	"rice-wine-shop/common/utils"
 	"rice-wine-shop/core/apperrors"
 	"rice-wine-shop/core/domain"
 	"rice-wine-shop/core/entities"
 	"strings"
+
+	"gorm.io/gorm"
 )
 
 type TypeRiceService struct {
@@ -89,9 +90,9 @@ func (u *TypeRiceService) GetTypeRiceNameByUserID(ctx context.Context, userID in
 		return nil, err
 	}
 
-	fileMap := make(map[int64][]string)
+	fileMap := make(map[int64][]*domain.FileStore)
 	for _, file := range allFiles {
-		fileMap[file.AnyID] = append(fileMap[file.AnyID], file.Path)
+		fileMap[file.AnyID] = append(fileMap[file.AnyID], file)
 	}
 
 	responses := make([]*entities.ListTypeRiceResponse, 0, len(typeRiceList))

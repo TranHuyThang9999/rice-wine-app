@@ -23,4 +23,5 @@ type RepositoryRice interface {
 	DeleteById(ctx context.Context, id int64) error
 	UpdateById(ctx context.Context, req *Rices) error
 	GetByRiceName(ctx context.Context, userID int64, name string) (int64, error)
+	GetListFileByUserID(ctx context.Context, userID int64) ([]*FileStore, error)
 }
