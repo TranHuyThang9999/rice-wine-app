@@ -35,6 +35,7 @@ func (u *RiceController) AddRice(ctx *gin.Context) {
 		return
 	}
 	RespondSuccess(ctx, nil)
+
 }
 
 func (u *RiceController) GetRiceByUserID(ctx *gin.Context) {
