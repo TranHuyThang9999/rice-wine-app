@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"rice-wine-shop/core/domain"
+
+	"gorm.io/gorm"
 )
 
 type RiceRepository struct {
@@ -54,6 +55,7 @@ func (r *RiceRepository) GetByRiceName(ctx context.Context, userID int64, name s
 	result := r.db.WithContext(ctx).Model(&domain.Rices{}).Where("creator_id = ? and name = ?", userID, name).Count(&count)
 	return count, result.Error
 }
+
 func (r *RiceRepository) GetListFileByUserID(ctx context.Context, userID int64) ([]*domain.FileStore, error) {
 	var files []*domain.FileStore
 	err := r.db.WithContext(ctx).

@@ -3,12 +3,13 @@ package services
 import (
 	"context"
 	"fmt"
-	"gorm.io/gorm"
 	"rice-wine-shop/common/log"
 	"rice-wine-shop/common/utils"
 	"rice-wine-shop/core/apperrors"
 	"rice-wine-shop/core/domain"
 	"rice-wine-shop/core/entities"
+
+	"gorm.io/gorm"
 )
 
 type RiceService struct {
@@ -44,6 +45,7 @@ func (u *RiceService) AddRice(ctx context.Context, userID int64, req *entities.C
 	riceID := utils.GenerateUniqueKey()
 	err = u.tran.ExecuteInTransaction(ctx, func(tx *gorm.DB) error {
 		count, err := u.typeRice.CheckExistsTypeRiceByID(ctx, userID, req.TypeRiceID)
+		log.Infof("data :", count)
 		if err != nil {
 			return err
 		}
