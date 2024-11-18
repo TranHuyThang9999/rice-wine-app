@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"rice-wine-shop/core/domain"
 
 	"gorm.io/gorm"
@@ -27,8 +28,15 @@ func (f *FileRepository) Create(ctx context.Context, tx *gorm.DB, req *domain.Fi
 	return result.Error
 }
 
-func (f *FileRepository) DeleteById(ctx context.Context, id int64) error {
-	panic("unimplemented")
+func (f *FileRepository) DeleteById(ctx context.Context, fileID, userID int64) error {
+	result := f.db.WithContext(ctx).Where("id = ? AND creator_id = ?", fileID, userID).Delete(&domain.FileStore{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("no record found with id %d and creator_id %d", fileID, userID)
+	}
+	return nil
 }
 
 func (f *FileRepository) GetListFileByObjectID(ctx context.Context, anyID int64) ([]*domain.FileStore, error) {
@@ -36,6 +44,7 @@ func (f *FileRepository) GetListFileByObjectID(ctx context.Context, anyID int64)
 	result := f.db.WithContext(ctx).Where("any_id = ?", anyID).Find(&files)
 	return files, result.Error
 }
+
 func (r *FileRepository) GetListFileByUserID(ctx context.Context, userID int64) ([]*domain.FileStore, error) {
 	var files []*domain.FileStore
 	err := r.db.WithContext(ctx).
@@ -51,6 +60,11 @@ func (r *FileRepository) GetListFileByUserID(ctx context.Context, userID int64) 
 }
 
 func (r *FileRepository) DeleteListFileByObjectID(ctx context.Context, tx *gorm.DB, id int64) error {
-	result := tx.Where("any_id = ?", id).Delete(&domain.FileStore{})
+	result := tx.Where("any_id = ? ", id).Delete(&domain.FileStore{})
+	return result.Error
+}
+
+func (u *FileRepository) UpsetFiles(ctx context.Context, req []*domain.FileStore) error {
+	result := u.db.WithContext(ctx).Create(req)
 	return result.Error
 }

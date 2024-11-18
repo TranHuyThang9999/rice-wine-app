@@ -19,6 +19,7 @@ func NewApiRouter(
 	middleware *middlewares.Middleware,
 	typeRice *controllers.TypeRiceController,
 	rice *controllers.RiceController,
+	file_store *controllers.FileStoreController,
 
 ) *ApiRouter {
 	engine := gin.New()
@@ -57,6 +58,11 @@ func NewApiRouter(
 		{
 			riceGroup.POST("/add", rice.AddRice)
 			riceGroup.GET("/list", rice.GetRiceByUserID)
+		}
+		fileStore := adminGroup.Group("/file_store")
+		{
+			fileStore.DELETE("delete/:fileID", file_store.DeleteFileByID)
+			fileStore.POST("/upload", file_store.UploadFile)
 		}
 	}
 

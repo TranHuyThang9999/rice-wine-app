@@ -56,9 +56,10 @@ func (u *TypeRiceService) AddTypeRice(ctx context.Context, creatorID int64, req 
 			var listFile = make([]*domain.FileStore, 0)
 			for _, file := range req.Files {
 				listFile = append(listFile, &domain.FileStore{
-					ID:    utils.GenerateUniqueKey(),
-					AnyID: typeRiceID,
-					Path:  file,
+					ID:        utils.GenerateUniqueKey(),
+					AnyID:     typeRiceID,
+					Path:      file,
+					CreatorID: creatorID,
 				})
 			}
 			err = u.file.AddListFile(ctx, tx, listFile)

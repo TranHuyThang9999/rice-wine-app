@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS file_stores (
     id BIGINT PRIMARY KEY,
     any_id BIGINT NOT NULL,
+    creator_id BIGINT NOT NULL,           -- ID người tạo
     path VARCHAR(255) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS type_rices (
@@ -22,7 +23,7 @@ CREATE TABLE IF NOT EXISTS type_rices (
 );
 
 CREATE TABLE  IF NOT EXISTS rices (
-    id BIGINT PRIMARY KEY,                -- ID tự tăng, khóa chính
+    id BIGINT PRIMARY KEY,
     creator_id BIGINT NOT NULL,           -- ID người tạo
     type_rice_id BIGINT NOT NULL,         -- ID loại gạo
     name VARCHAR(255) NOT NULL,           -- Tên gạo

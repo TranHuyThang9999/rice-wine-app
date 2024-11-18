@@ -51,9 +51,10 @@ func (u *UserService) AddUser(ctx context.Context, req *entities.CreateUsersRequ
 			return err
 		}
 		err = u.file.Create(ctx, tx, &domain.FileStore{
-			ID:    utils.GenerateUniqueKey(),
-			AnyID: userID,
-			Path:  req.Avatar,
+			ID:        utils.GenerateUniqueKey(),
+			AnyID:     userID,
+			Path:      req.Avatar,
+			CreatorID: userID,
 		})
 		if err != nil {
 			log.Error(err, "error")

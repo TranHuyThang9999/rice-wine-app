@@ -28,6 +28,7 @@ func loadUseCase() []fx.Option {
 		fx.Provide(interfaces.NewOrderServerService),
 		fx.Provide(services.NewTypeRiceService),
 		fx.Provide(services.NewRiceService),
+		fx.Provide(services.NewFileStoreSerVice),
 	}
 }
 
@@ -45,6 +46,7 @@ func loadEngine() []fx.Option {
 		fx.Provide(middlewares.NewMiddleware),
 		fx.Provide(controllers.NewTypeRiceController),
 		fx.Provide(controllers.NewRiceController),
+		fx.Provide(controllers.NewFileStoreController),
 	}
 }
 func loadAdapter() []fx.Option {
