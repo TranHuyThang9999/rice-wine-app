@@ -127,3 +127,26 @@ func (u *TypeRiceService) DeleteById(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (u *TypeRiceService) UpdateById(ctx context.Context, userID int64, req *entities.UpdateTypeRiceRequest) (*apperrors.ErrTypeRice, error) {
+	existingTypeRice, err := u.typeRice.GetByName(ctx, userID, req.Name)
+	if err != nil {
+		log.Error(err, "error")
+		return nil, err
+	}
+	if existingTypeRice != nil && existingTypeRice.ID != req.ID {
+		log.Info("type rice name already exists")
+		return apperrors.ErrConflictTypeName.Pointer(), nil
+	}
+	err = u.typeRice.UpdateById(ctx, &domain.TypeRice{
+		ID:        req.ID,
+		Name:      req.Name,
+		CreatorID: userID,
+	})
+	if err != nil {
+		log.Error(err, "error")
+		return nil, err
+	}
+
+	return nil, nil
+}

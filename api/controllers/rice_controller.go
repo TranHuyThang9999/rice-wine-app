@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"rice-wine-shop/core/entities"
 	"rice-wine-shop/core/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 type RiceController struct {
@@ -22,10 +23,8 @@ func (u *RiceController) AddRice(ctx *gin.Context) {
 	if !BindAndValidate(ctx, &req) {
 		return
 	}
-	userID, ok := GetUserID(ctx)
-	if !ok {
-		return
-	}
+	userID := GetUserID(ctx)
+
 	count, err := u.rice.AddRice(ctx, userID, &req)
 	if err != nil {
 		RespondError(ctx, http.StatusInternalServerError, err)
@@ -39,10 +38,8 @@ func (u *RiceController) AddRice(ctx *gin.Context) {
 }
 
 func (u *RiceController) GetRiceByUserID(ctx *gin.Context) {
-	userID, ok := GetUserID(ctx)
-	if !ok {
-		return
-	}
+	userID := GetUserID(ctx)
+
 	resp, err := u.rice.GetListRiceByUserID(ctx, userID)
 	if err != nil {
 		RespondError(ctx, http.StatusInternalServerError, err)

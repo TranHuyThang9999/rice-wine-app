@@ -51,6 +51,7 @@ func NewApiRouter(
 			typeRiceGroup.POST("/add", typeRice.AddTypeRice)
 			typeRiceGroup.GET("/list", typeRice.GetTypeRice)
 			typeRiceGroup.DELETE("/delete/:id", typeRice.DeleteById)
+			typeRiceGroup.PATCH("/update", typeRice.UpdateById)
 		}
 		riceGroup := adminGroup.Group("/rice")
 		{

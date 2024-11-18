@@ -20,4 +20,5 @@ type RepositoryTypeRice interface {
 	GetListByCreator(ctx context.Context, creatorID int64) ([]*TypeRice, error)
 	GetTypeRiceNameByUserID(ctx context.Context, userID int64, nameRice string) (int64, error)
 	CheckExistsTypeRiceByID(ctx context.Context, userID int64, typeRiceID int64) (int64, error)
+	GetByName(ctx context.Context, userID int64, nameRice string) (*TypeRice, error)
 }

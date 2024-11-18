@@ -23,10 +23,7 @@ func (u *TypeRiceController) AddTypeRice(c *gin.Context) {
 	if !BindAndValidate(c, &req) {
 		return
 	}
-	userID, ok := GetUserID(c)
-	if !ok {
-		return
-	}
+	userID := GetUserID(c)
 
 	code, err := u.typeRice.AddTypeRice(c, userID, &req)
 	if err != nil {
@@ -41,10 +38,8 @@ func (u *TypeRiceController) AddTypeRice(c *gin.Context) {
 }
 
 func (u *TypeRiceController) GetTypeRice(c *gin.Context) {
-	userID, ok := GetUserID(c)
-	if !ok {
-		return
-	}
+	userID := GetUserID(c)
+
 	resp, err := u.typeRice.GetTypeRiceNameByUserID(c, userID)
 	if err != nil {
 		RespondError(c, http.StatusInternalServerError, err)
@@ -58,6 +53,23 @@ func (u *TypeRiceController) DeleteById(ctx *gin.Context) {
 	err := u.typeRice.DeleteById(ctx, id)
 	if err != nil {
 		RespondError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	RespondSuccess(ctx, nil)
+}
+
+func (u *TypeRiceController) UpdateById(ctx *gin.Context) {
+	var req entities.UpdateTypeRiceRequest
+	if !BindAndValidate(ctx, &req) {
+		return
+	}
+	code, err := u.typeRice.UpdateById(ctx, GetUserID(ctx), &req)
+	if err != nil {
+		RespondError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	if code != nil {
+		RespondConflict(ctx, http.StatusOK, "type rice name already exists")
 		return
 	}
 	RespondSuccess(ctx, nil)

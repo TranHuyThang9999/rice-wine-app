@@ -53,13 +53,13 @@ func BindAndValidate(ctx *gin.Context, req interface{}) bool {
 	return true
 }
 
-func GetUserID(c *gin.Context) (int64, bool) {
+func GetUserID(c *gin.Context) int64 {
 	userID, ok := c.Get("userID")
 	if !ok {
 		c.JSON(401, gin.H{
 			"error": "User ID not found in context",
 		})
-		return 0, false
+		return 0
 	}
 
 	id, ok := userID.(int64)
@@ -67,9 +67,9 @@ func GetUserID(c *gin.Context) (int64, bool) {
 		c.JSON(400, gin.H{
 			"error": "User ID has an invalid data type",
 		})
-		return 0, false
+		return 0
 	}
-	return id, true
+	return id
 }
 
 func GetPhoneNumber(ctx *gin.Context) (string, bool) {

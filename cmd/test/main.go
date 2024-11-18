@@ -1,46 +1,66 @@
 package main
 
 import (
-	"context"
-	"log"
-	"net"
-	"time"
-
-	"rice-wine-shop/core/adapters/interfaces"
-	"rice-wine-shop/core/generator"
-
-	"google.golang.org/grpc"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"fmt"
+	"os"
 )
 
+// Hàm để tạo và lưu private key
+func generateRSAKeys() error {
+	// Tạo private key RSA 1024-bit
+	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
+	if err != nil {
+		return fmt.Errorf("lỗi tạo private key: %v", err)
+	}
+
+	// Lưu private key vào file
+	privateKeyFile, err := os.Create("private_key.pem")
+	if err != nil {
+		return fmt.Errorf("lỗi tạo file private_key.pem: %v", err)
+	}
+	defer privateKeyFile.Close()
+
+	privateKeyPEM := &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
+	}
+	if err := pem.Encode(privateKeyFile, privateKeyPEM); err != nil {
+		return fmt.Errorf("lỗi ghi private key vào file: %v", err)
+	}
+	fmt.Println("Private key được lưu tại private_key.pem")
+
+	// Lưu public key vào file
+	publicKey := &privateKey.PublicKey
+	publicKeyFile, err := os.Create("public_key.pem")
+	if err != nil {
+		return fmt.Errorf("lỗi tạo file public_key.pem: %v", err)
+	}
+	defer publicKeyFile.Close()
+
+	publicKeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
+	if err != nil {
+		return fmt.Errorf("lỗi mã hóa public key: %v", err)
+	}
+	publicKeyPEM := &pem.Block{
+		Type:  "PUBLIC KEY",
+		Bytes: publicKeyBytes,
+	}
+	if err := pem.Encode(publicKeyFile, publicKeyPEM); err != nil {
+		return fmt.Errorf("lỗi ghi public key vào file: %v", err)
+	}
+	fmt.Println("Public key được lưu tại public_key.pem")
+
+	return nil
+}
+
 func main() {
-	lis, err := net.Listen("tcp", ":5000")
-	if err != nil {
-		log.Fatalf("failed to listen on port 5000: %v", err)
-	}
-
-	grpcServer := grpc.NewServer()
-
-	generator.RegisterOrderServiceServer(grpcServer, interfaces.NewOrderServerService())
-
-	go func() {
-		log.Println("gRPC server is running on port 5000")
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
-
-	orderClient := interfaces.NewOrderServerService()
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	req := &generator.CreateOrderRequest{Name: "máy tính", Price: 77777}
-	_, err = orderClient.CreateOrder(ctx, req)
-	if err != nil {
-		log.Printf("CreateOrder failed: %v", err)
+	if err := generateRSAKeys(); err != nil {
+		fmt.Printf("Lỗi: %v\n", err)
 	} else {
-		log.Printf("CreateOrder response")
+		fmt.Println("Cặp khóa RSA đã được tạo thành công!")
 	}
-
-	select {}
 }
