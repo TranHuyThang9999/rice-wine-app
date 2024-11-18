@@ -11,3 +11,8 @@ type ListTypeRiceResponse struct {
 	Name  string              `json:"name"`
 	Files []*domain.FileStore `json:"files,omitempty"`
 }
+
+type ListTypeRiceSelect struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}

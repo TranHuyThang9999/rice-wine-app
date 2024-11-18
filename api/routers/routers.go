@@ -1,10 +1,11 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"rice-wine-shop/api/controllers"
 	"rice-wine-shop/api/middlewares"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ApiRouter struct {
@@ -49,6 +50,7 @@ func NewApiRouter(
 		{
 			typeRiceGroup.POST("/add", typeRice.AddTypeRice)
 			typeRiceGroup.GET("/list", typeRice.GetTypeRice)
+			typeRiceGroup.DELETE("/delete/:id", typeRice.DeleteById)
 		}
 		riceGroup := adminGroup.Group("/rice")
 		{

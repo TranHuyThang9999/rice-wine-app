@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"rice-wine-shop/core/entities"
 	"rice-wine-shop/core/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 type TypeRiceController struct {
@@ -47,6 +48,17 @@ func (u *TypeRiceController) GetTypeRice(c *gin.Context) {
 	resp, err := u.typeRice.GetTypeRiceNameByUserID(c, userID)
 	if err != nil {
 		RespondError(c, http.StatusInternalServerError, err)
+		return
 	}
 	RespondSuccess(c, resp)
+}
+
+func (u *TypeRiceController) DeleteById(ctx *gin.Context) {
+	id := GetIdFromParam(ctx, "id")
+	err := u.typeRice.DeleteById(ctx, id)
+	if err != nil {
+		RespondError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	RespondSuccess(ctx, nil)
 }

@@ -106,3 +106,24 @@ func (u *TypeRiceService) GetTypeRiceNameByUserID(ctx context.Context, userID in
 
 	return responses, nil
 }
+
+func (u *TypeRiceService) DeleteById(ctx context.Context, id int64) error {
+	if err := u.trans.ExecuteInTransaction(ctx, func(tx *gorm.DB) error {
+		err := u.typeRice.DeleteById(ctx, tx, id)
+		if err != nil {
+			log.Error(err, "error")
+			return err
+		}
+		err = u.file.DeleteListFileByObjectID(ctx, tx, id)
+		if err != nil {
+			log.Error(err, "error")
+			return err
+		}
+		return nil
+	}); err != nil {
+		log.Error(err, "error trans")
+		return err
+	}
+
+	return nil
+}

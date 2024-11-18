@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"rice-wine-shop/core/domain"
+
+	"gorm.io/gorm"
 )
 
 type TypeRiceRepository struct {
@@ -25,8 +26,8 @@ func (t *TypeRiceRepository) Add(ctx context.Context, tx *gorm.DB, req *domain.T
 	return result.Error
 }
 
-func (t *TypeRiceRepository) DeleteById(ctx context.Context, id int64) error {
-	result := t.db.WithContext(ctx).Where("id = ?", id).Delete(&domain.TypeRice{})
+func (t *TypeRiceRepository) DeleteById(ctx context.Context, tx *gorm.DB, id int64) error {
+	result := tx.WithContext(ctx).Where("id = ?", id).Delete(&domain.TypeRice{})
 	return result.Error
 }
 

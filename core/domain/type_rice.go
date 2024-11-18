@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -14,7 +15,7 @@ type TypeRice struct {
 
 type RepositoryTypeRice interface {
 	Add(ctx context.Context, tx *gorm.DB, req *TypeRice) error
-	DeleteById(ctx context.Context, id int64) error
+	DeleteById(ctx context.Context, tx *gorm.DB, id int64) error
 	UpdateById(ctx context.Context, req *TypeRice) error
 	GetListByCreator(ctx context.Context, creatorID int64) ([]*TypeRice, error)
 	GetTypeRiceNameByUserID(ctx context.Context, userID int64, nameRice string) (int64, error)

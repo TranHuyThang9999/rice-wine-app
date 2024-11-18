@@ -17,4 +17,5 @@ type RepositoryFileStore interface {
 	GetListFileByObjectID(ctx context.Context, anyID int64) ([]*FileStore, error)
 	DeleteById(ctx context.Context, id int64) error
 	GetListFileByUserID(ctx context.Context, userID int64) ([]*FileStore, error)
+	DeleteListFileByObjectID(ctx context.Context, tx *gorm.DB, id int64) error
 }

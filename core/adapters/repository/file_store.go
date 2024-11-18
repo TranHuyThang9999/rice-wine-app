@@ -49,3 +49,8 @@ func (r *FileRepository) GetListFileByUserID(ctx context.Context, userID int64) 
 	}
 	return files, nil
 }
+
+func (r *FileRepository) DeleteListFileByObjectID(ctx context.Context, tx *gorm.DB, id int64) error {
+	result := tx.Where("any_id = ?", id).Delete(&domain.FileStore{})
+	return result.Error
+}

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"rice-wine-shop/common/log"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -108,4 +109,14 @@ func GetRole(ctx *gin.Context) (int, bool) {
 	}
 
 	return roleNumber, true
+}
+
+func GetIdFromParam(ctx *gin.Context, name string) int64 {
+	idStr := ctx.Param(name)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return 0
+	}
+	return id
 }
